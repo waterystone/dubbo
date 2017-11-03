@@ -15,15 +15,12 @@
  */
 package com.alibaba.dubbo.common.extensionloader;
 
+import com.alibaba.dubbo.common.BaseTest;
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.extensionloader.activate.ActivateExt1;
-import com.alibaba.dubbo.common.extensionloader.activate.impl.ActivateExt1Impl1;
-import com.alibaba.dubbo.common.extensionloader.activate.impl.GroupActivateExtImpl;
-import com.alibaba.dubbo.common.extensionloader.activate.impl.OrderActivateExtImpl1;
-import com.alibaba.dubbo.common.extensionloader.activate.impl.OrderActivateExtImpl2;
-import com.alibaba.dubbo.common.extensionloader.activate.impl.ValueActivateExtImpl;
+import com.alibaba.dubbo.common.extensionloader.activate.impl.*;
 import com.alibaba.dubbo.common.extensionloader.ext1.SimpleExt;
 import com.alibaba.dubbo.common.extensionloader.ext1.impl.SimpleExtImpl1;
 import com.alibaba.dubbo.common.extensionloader.ext1.impl.SimpleExtImpl2;
@@ -36,14 +33,7 @@ import com.alibaba.dubbo.common.extensionloader.ext8_add.AddExt1;
 import com.alibaba.dubbo.common.extensionloader.ext8_add.AddExt2;
 import com.alibaba.dubbo.common.extensionloader.ext8_add.AddExt3;
 import com.alibaba.dubbo.common.extensionloader.ext8_add.AddExt4;
-import com.alibaba.dubbo.common.extensionloader.ext8_add.impl.AddExt1Impl1;
-import com.alibaba.dubbo.common.extensionloader.ext8_add.impl.AddExt1_ManualAdaptive;
-import com.alibaba.dubbo.common.extensionloader.ext8_add.impl.AddExt1_ManualAdd1;
-import com.alibaba.dubbo.common.extensionloader.ext8_add.impl.AddExt1_ManualAdd2;
-import com.alibaba.dubbo.common.extensionloader.ext8_add.impl.AddExt2_ManualAdaptive;
-import com.alibaba.dubbo.common.extensionloader.ext8_add.impl.AddExt3_ManualAdaptive;
-import com.alibaba.dubbo.common.extensionloader.ext8_add.impl.AddExt4_ManualAdaptive;
-
+import com.alibaba.dubbo.common.extensionloader.ext8_add.impl.*;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -51,21 +41,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 /**
  * @author ding.lid
  */
-public class ExtensionLoaderTest {
+public class ExtensionLoaderTest extends BaseTest {
     @Test
     public void test_getExtensionLoader_Null() throws Exception {
         try {
@@ -123,6 +106,51 @@ public class ExtensionLoaderTest {
     public void test_getExtension() throws Exception {
         assertTrue(ExtensionLoader.getExtensionLoader(SimpleExt.class).getExtension("impl1") instanceof SimpleExtImpl1);
         assertTrue(ExtensionLoader.getExtensionLoader(SimpleExt.class).getExtension("impl2") instanceof SimpleExtImpl2);
+    }
+
+    @Test
+    public void adu_test_getDefaultExtension() throws Exception {
+        ExtensionLoader<SimpleExt> extExtensionLoader = ExtensionLoader.getExtensionLoader(SimpleExt.class);
+
+
+        SimpleExt ext = extExtensionLoader.getDefaultExtension();
+        logRes(ext);
+    }
+
+    @Test
+    public void adu_test_getExtension() throws Exception {
+        ExtensionLoader<SimpleExt> extExtensionLoader = ExtensionLoader.getExtensionLoader(SimpleExt.class);
+
+
+        SimpleExt ext = extExtensionLoader.getExtension("impl2");
+        logRes(ext);
+    }
+
+    @Test
+    public void adu_test_getAdaptiveExtension() throws Exception {
+        ExtensionLoader<SimpleExt> extExtensionLoader = ExtensionLoader.getExtensionLoader(SimpleExt.class);
+
+
+        SimpleExt ext = extExtensionLoader.getAdaptiveExtension();
+        logRes(ext);
+    }
+
+    @Test
+    public void adu_test_getWrapperExtension() throws Exception {
+        ExtensionLoader<WrappedExt> extExtensionLoader = ExtensionLoader.getExtensionLoader(WrappedExt.class);
+
+
+        WrappedExt impl1 = extExtensionLoader.getExtension("impl1");//ExtensionLoader会自动包装
+        logRes(impl1);
+    }
+
+    @Test
+    public void adu_test_getWrapperExtension_withWrapperName() throws Exception {
+        ExtensionLoader<WrappedExt> extExtensionLoader = ExtensionLoader.getExtensionLoader(WrappedExt.class);
+
+
+        WrappedExt impl1 = extExtensionLoader.getExtension("wrapper1");
+        logRes(impl1);
     }
 
     @Test
